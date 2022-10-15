@@ -32,8 +32,8 @@ app.get('/', async (req, res) => {
 app.get('/auth/shopify', async (req, res) => {
     res.send("error");
     let authorizedRoute = await Shopify.Auth.beginAuth(
-        http_request,
-        http_response,
+        req,
+        res,
         req.query.shop,
         '/auth/shopify/callback',
         false,
