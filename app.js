@@ -7,14 +7,13 @@ require('dotenv').config();
 
 const PORT = process.env.PORT || 3000;
 
-
 const { API_KEY, API_SECRET_KEY, SCOPES, SHOP, HOST, HOST_SCHEME } = process.env;
 
 Shopify.Context.initialize({
     API_KEY,
     API_SECRET_KEY,
     SCOPES: [SCOPES],
-    HOST_NAME: HOST.replace(/https?:\/\//, ""),
+    HOST_NAME: HOST,
     HOST_SCHEME,
     IS_EMBEDDED_APP: false,
     API_VERSION: ApiVersion.July22
@@ -22,19 +21,20 @@ Shopify.Context.initialize({
 
 const ACTIVE_SHOPIFY_SHOPS = {};
 
-app.get('/', async (http_request, http_response) => {
+app.get('/', async (req, res) => {
     if(ACTIVE_SHOPIFY_SHOPS[SHOP] === undefined) {
-        http_response.redirect('/auth/shopify');
+        res.redirect('/auth/shopify');
     } else {
-        http_response.send('<html><body><p>Your Node instance is running.</p></body></html>');
+        res.send('<html><body><p>Your Node instance is running.</p></body></html>');
     }
 });
 
-app.get('/auth/shopify', async (http_request, http_response) => {
+app.get('/auth/shopify', async (req, res) => {
+    res.send("error");
     let authorizedRoute = await Shopify.Auth.beginAuth(
         http_request,
         http_response,
-        SHOP,
+        req.query.shop,
         '/auth/shopify/callback',
         false,
     );
